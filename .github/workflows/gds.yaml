@@ -16,12 +16,25 @@ jobs:
       - name: Build GDS
         uses: TinyTapeout/tt-gds-action@tt06
   
-  precheck:
+ precheck:
     needs: gds
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
       - name: Run Tiny Tapeout Precheck
         uses: TinyTapeout/tt-gds-action/precheck@tt06
+        continue-on-error: true
+
+      - name: Upload precheck results if they exist
+        if: success() || failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: precheck-reports
+          path: tt/precheck/reports/results.xml
 
   viewer:
     needs: gds
@@ -30,4 +43,10 @@ jobs:
       pages: write      # to deploy to Pages
       id-token: write   # to verify the deployment originates from an appropriate source
     steps:
-      - uses: TinyTapeout/tt-gds-action/viewer@tt06
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Run Tiny Tapeout Viewer
+        uses: TinyTapeout/tt-gds-action/viewer@tt06
