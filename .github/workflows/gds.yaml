@@ -16,7 +16,7 @@ jobs:
       - name: Build GDS
         uses: TinyTapeout/tt-gds-action@tt06
   
- precheck:
+precheck:
 needs: gds
 runs-on: ubuntu-latest
 steps:
